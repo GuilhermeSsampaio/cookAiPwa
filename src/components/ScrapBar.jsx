@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Search } from "react-bootstrap-icons";
 
 export default function ScrapBar({ onScrap }) {
   const [inputText, setInputText] = useState("");
@@ -63,12 +64,8 @@ export default function ScrapBar({ onScrap }) {
           onFocus={() => setShowRecentLinks(true)}
         />
         <button onClick={handleSearch} style={styles.iconButton}>
-          <span
-            role="img"
-            aria-label="search"
-            style={{ fontSize: 22, color: "#ef9744ff" }}
-          >
-            🔍
+          <span role="img" aria-label="search" style={{ color: "#ef9744ff" }}>
+            <Search size={28} />
           </span>
         </button>
       </div>

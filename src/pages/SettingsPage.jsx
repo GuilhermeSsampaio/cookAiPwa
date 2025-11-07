@@ -5,84 +5,51 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.title}>Configurações</div>
-      <div style={styles.item}>
-        <span style={styles.label}>Notificações</span>
-        <label style={styles.switchLabel}>
-          <input
-            type="checkbox"
-            checked={notifications}
-            onChange={() => setNotifications(!notifications)}
-            style={styles.switch}
-          />
-          <span
-            style={{
-              ...styles.thumb,
-              backgroundColor: notifications ? "#ed4f27ff" : "#ccc",
-            }}
-          />
-        </label>
-      </div>
-      <div style={styles.item}>
-        <span style={styles.label}>Modo escuro</span>
-        <label style={styles.switchLabel}>
-          <input
-            type="checkbox"
-            checked={darkMode}
-            onChange={() => setDarkMode(!darkMode)}
-            style={styles.switch}
-          />
-          <span
-            style={{
-              ...styles.thumb,
-              backgroundColor: darkMode ? "#ed4f27ff" : "#ccc",
-            }}
-          />
-        </label>
+    <div className="container py-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title mb-4">
+            <i className="bi bi-gear-fill me-2 text-primary"></i>
+            Configurações
+          </h2>
+
+          <div className="list-group">
+            <div className="list-group-item d-flex justify-content-between align-items-center p-3">
+              <div>
+                <i className="bi bi-bell-fill me-2 text-primary"></i>
+                Notificações
+              </div>
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="notificationSwitch"
+                  checked={notifications}
+                  onChange={() => setNotifications(!notifications)}
+                />
+              </div>
+            </div>
+
+            <div className="list-group-item d-flex justify-content-between align-items-center p-3">
+              <div>
+                <i className="bi bi-moon-stars-fill me-2 text-primary"></i>
+                Modo escuro
+              </div>
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="darkModeSwitch"
+                  checked={darkMode}
+                  onChange={() => setDarkMode(!darkMode)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: 400,
-    margin: "40px auto",
-    padding: 32,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 24,
-  },
-  item: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 16,
-  },
-  switchLabel: {
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
-  },
-  switch: {
-    display: "none",
-  },
-  thumb: {
-    width: 36,
-    height: 20,
-    borderRadius: 12,
-    display: "inline-block",
-    marginLeft: 8,
-    transition: "background 0.2s",
-  },
-};

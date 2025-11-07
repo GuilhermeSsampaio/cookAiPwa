@@ -5,6 +5,7 @@ import { useAuth } from "../contexts/auth/useAuth";
 import ModalLogin from "../components/ModalLogin";
 import { useNavigate } from "react-router-dom";
 import { userApiHandler } from "../handlers/userApiHandler";
+import { Book } from "react-bootstrap-icons";
 
 export default function BookPage() {
   const useApiHandler = apiHandler();
@@ -54,7 +55,7 @@ export default function BookPage() {
           margin: "10px 0 0 16px",
         }}
       >
-        📖 Recipes Book
+        <Book /> Recipes Book
       </div>
       <RecipesList recipes={recipes} />
       <ModalLogin

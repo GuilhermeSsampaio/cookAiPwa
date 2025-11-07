@@ -5,6 +5,7 @@ import { useAuth } from "../contexts/auth/useAuth";
 import { apiHandler } from "../handlers/apiHandler";
 import { userApiHandler } from "../handlers/userApiHandler";
 import { toast } from "react-toastify";
+import { ArrowsExpand, BookmarkHeart } from "react-bootstrap-icons";
 // Importe seus hooks/contextos conforme necessário
 // import { useApi } from "@/hooks/useApi";
 // import { useAuth } from "@/contexts/AuthContext";
@@ -70,7 +71,7 @@ export default function ScrapResults({ data }) {
             aria-label="expandir"
             style={{ fontSize: 20, color: "#ed4f27ff" }}
           >
-            ⛶
+            <ArrowsExpand size={24} />
           </span>
           <span style={styles.actionText}>Expandir</span>
         </button>
@@ -80,7 +81,7 @@ export default function ScrapResults({ data }) {
             aria-label="salvar"
             style={{ fontSize: 20, color: "#ed4f27ff" }}
           >
-            🔖
+            <BookmarkHeart size={28} />
           </span>
           <span style={styles.actionText}>Salvar</span>
         </button>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Gear, Person } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 
 export default function ProfileDrawer({ visible, onClose }) {
@@ -18,7 +19,7 @@ export default function ProfileDrawer({ visible, onClose }) {
           }}
         >
           <span style={styles.icon} role="img" aria-label="user">
-            👤
+            <Person size={24} />
           </span>
           <span style={styles.drawerText}>Meu Perfil</span>
         </button>
@@ -30,7 +31,7 @@ export default function ProfileDrawer({ visible, onClose }) {
           }}
         >
           <span style={styles.icon} role="img" aria-label="settings">
-            ⚙️
+            <Gear size={24} />
           </span>
           <span style={styles.drawerText}>Configurações</span>
         </button>

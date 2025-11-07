@@ -1,49 +1,59 @@
 import React, { useState } from "react";
+import {
+  House,
+  Book,
+  Search,
+  ForkKnife,
+  JournalBookmarkFill,
+} from "react-bootstrap-icons"; // Importe todos os ícones necessários
 import { useNavigate } from "react-router-dom";
 
 const tabs = [
   {
     name: "CookAi",
     path: "/",
-    icon: "👨‍🍳", // chef hat emoji
+    icon: ForkKnife,
   },
   {
     name: "Book",
     path: "/book",
-    icon: "📖", // book emoji
+    icon: JournalBookmarkFill,
   },
   {
     name: "Search",
     path: "/search",
-    icon: "🔍", // search emoji
+    icon: Search,
   },
 ];
 
 export default function Footer() {
-  const [activeTab, setActiveTab] = useState("");
+  const [activeTab, setActiveTab] = useState(window.location.pathname);
   const navigate = useNavigate();
 
   const handleTabClick = (path) => {
-    console.log(path);
     setActiveTab(path);
     navigate(path);
   };
 
   return (
     <div style={styles.footer}>
-      {tabs.map((tab) => (
-        <button
-          key={tab.path}
-          style={{
-            ...styles.tabButton,
-            ...(activeTab === tab.path ? styles.tabButtonActive : {}),
-          }}
-          onClick={() => handleTabClick(tab.path)}
-        >
-          <span style={styles.icon}>{tab.icon}</span>
-          <span style={styles.label}>{tab.name}</span>
-        </button>
-      ))}
+      {tabs.map((tab) => {
+        const Icon = tab.icon; // Componente do ícone
+        return (
+          <button
+            key={tab.path}
+            style={{
+              ...styles.tabButton,
+              ...(activeTab === tab.path ? styles.tabButtonActive : {}),
+            }}
+            onClick={() => handleTabClick(tab.path)}
+          >
+            {/* Renderize o componente do ícone */}
+            <Icon style={styles.icon} />
+            <span style={styles.label}>{tab.name}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

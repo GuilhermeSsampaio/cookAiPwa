@@ -31,8 +31,10 @@ export default function Home() {
     setLoading(false);
   };
   return (
-    <div>
-      <h1>Bem-vindo{user ? `, ${user.username}` : ""}!</h1>
+    <div className="container">
+      <h1 className="display-6 fw-bold text-center py-3 mb-4 bg-light rounded shadow-sm mt-4">
+        Bem-vindo{user ? `, ${user.username}` : ""}!
+      </h1>
       <ScrapBar onScrap={handleScrap} />
       {loading ? (
         <h1>Carregando...</h1>

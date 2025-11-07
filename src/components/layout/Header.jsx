@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ProfileDrawer from "../ProfileDrawer";
+import { Person } from "react-bootstrap-icons"; // Trocando para o ícone Person que é mais clean
 
 export default function Header() {
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -11,14 +12,7 @@ export default function Header() {
           style={styles.profileBtn}
           onClick={() => setDrawerVisible(true)}
         >
-          {/* Ícone de usuário usando emoji, substitua por SVG se preferir */}
-          <span
-            role="img"
-            aria-label="user"
-            style={{ fontSize: 28, color: "#fff" }}
-          >
-            👤
-          </span>
+          <Person size={24} style={styles.profileIcon} />
         </button>
         <h1 style={styles.title}>CookAi</h1>
         <p style={styles.text}>Bem vindo ao CookAi!</p>
@@ -52,11 +46,21 @@ const styles = {
     top: 20,
     right: 24,
     zIndex: 2,
-    backgroundColor: "rgba(0,0,0,0.15)",
-    borderRadius: 20,
-    padding: 4,
-    border: "none",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: "50%",
+    width: 40,
+    height: 40,
+    border: "2px solid rgba(255,255,255,0.3)",
     cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 0.2s ease",
+    padding: 0,
+  },
+  profileIcon: {
+    color: "#fff",
+    transition: "transform 0.2s ease",
   },
   title: {
     fontSize: 28,

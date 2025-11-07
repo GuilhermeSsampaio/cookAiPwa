@@ -1,4 +1,5 @@
 import React from "react";
+import { XCircle } from "react-bootstrap-icons";
 import ReactMarkdown from "react-markdown";
 
 export default function Recipe({ visible, onClose, data }) {
@@ -10,7 +11,7 @@ export default function Recipe({ visible, onClose, data }) {
         <div style={styles.modalHeader}>
           <button style={styles.closeBtn} onClick={onClose}>
             <span style={styles.closeIcon} aria-label="Fechar">
-              ✖️
+              <XCircle size={34} />
             </span>
           </button>
           <span style={styles.modalTitle}>Receita Completa</span>
