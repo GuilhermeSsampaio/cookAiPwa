@@ -10,3 +10,5 @@ createRoot(document.getElementById("root")).render(
     <App />
   </StrictMode>
 );
+
+// Registra o service worker para funcionalidades PWA
