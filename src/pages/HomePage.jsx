@@ -32,9 +32,10 @@ export default function Home() {
   };
   return (
     <div className="container">
-      <h1 className="display-6 fw-bold text-center py-3 mb-4 bg-light rounded shadow-sm mt-4">
+      <div style={styles.title} className="m-4">
         Bem-vindo{user ? `, ${user.username}` : ""}!
-      </h1>
+      </div>
+
       <ScrapBar onScrap={handleScrap} />
       {loading ? (
         <div
@@ -60,3 +61,12 @@ export default function Home() {
     </div>
   );
 }
+const styles = {
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#ed4f27ff",
+    marginBottom: 16,
+    textAlign: "left",
+  },
+};
