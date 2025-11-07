@@ -41,5 +41,19 @@ export const userApiHandler = (user, setUser) => {
     localStorage.removeItem("@CookAI:user");
     setUser(null);
   };
-  return { registerIn, login, signOut };
+
+  const getUserData = async () => {
+    try {
+      const userData = localStorage.getItem("@CookAI:user");
+      if (!userData) return null;
+      const userDataObject = JSON.parse(userData);
+      if (!userDataObject || typeof userDataObject !== "object") return null;
+      return userDataObject;
+    } catch (error) {
+      console.error("Erro ao recuperar os dados do usuário:", error);
+      return null;
+    }
+  };
+
+  return { registerIn, login, getUserData, signOut };
 };

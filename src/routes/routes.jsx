@@ -4,20 +4,26 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import ProtectedRoutes from "./ProtectedRoutes";
 import Home from "../pages/HomePage";
+import UserPage from "../pages/UserPage";
+import SettingsPage from "../pages/SettingsPage";
+import BookPage from "../pages/BookPage";
+import SearchPage from "../pages/SearchPage";
+import Layout from "../components/layout/Layout";
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoutes>
-            <Home />
-          </ProtectedRoutes>
-        }
-      />
+      <Route element={<ProtectedRoutes />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/user" element={<UserPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/book" element={<BookPage />} />
+          <Route path="/search" element={<SearchPage />} />
+        </Route>
+      </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
