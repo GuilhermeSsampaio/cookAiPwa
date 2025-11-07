@@ -34,7 +34,7 @@ export default function ScrapResults({ data }) {
       const res = await useApiHandler.saveRecipe(userId, { content: data });
       console.log("resposata: " + res);
       setSavedRecipes([...savedRecipes, data]);
-      toast.success("Receita salva com sucesso!");
+      // toast.success("Receita salva com sucesso!");
       // Toast de sucesso
     } catch (e) {
       console.error("Failed to save recipe", e);
