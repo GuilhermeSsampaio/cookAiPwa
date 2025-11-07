@@ -37,9 +37,22 @@ export default function Home() {
       </h1>
       <ScrapBar onScrap={handleScrap} />
       {loading ? (
-        <h1>Carregando...</h1>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ minHeight: "200px" }}
+        >
+          <div
+            className="spinner-border text-primary"
+            role="status"
+            style={{ width: "3rem", height: "3rem" }}
+          >
+            <span className="visually-hidden">Carregando...</span>
+          </div>
+        </div>
       ) : error ? (
-        <h1>{error}</h1>
+        <div className="alert alert-danger text-center mt-4" role="alert">
+          {error}
+        </div>
       ) : (
         <ScrapResults data={results || ""} />
       )}
