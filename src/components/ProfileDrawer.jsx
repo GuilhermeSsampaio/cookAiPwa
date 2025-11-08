@@ -35,6 +35,26 @@ export default function ProfileDrawer({ visible, onClose }) {
           </span>
           <span style={styles.drawerText}>Configurações</span>
         </button>
+        <div style={styles.brandFooter}>
+          <span>
+            Desenvolvido por{" "}
+            <a
+              href="https://portfolio-guisamp.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#888" }}
+            >
+              GuiSamp
+              <img
+                src="/icons/logo-gui.png"
+                alt="logotipo da marca do desenvolvedor"
+                width={40}
+                height={40}
+                style={{ marginLeft: 8 }}
+              />
+            </a>
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -89,5 +109,15 @@ const styles = {
   icon: {
     fontSize: 20,
     color: "#ed4f27ff",
+  },
+  brandFooter: {
+    marginTop: "auto",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 13,
+    color: "#888",
+    paddingBottom: 16,
+    gap: 8, // espaçamento entre texto e imagem
   },
 };
