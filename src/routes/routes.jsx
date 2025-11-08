@@ -13,9 +13,9 @@ import Layout from "../components/layout/Layout";
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
       <Route element={<Layout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<SearchPage />} />
 

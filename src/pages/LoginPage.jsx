@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth/useAuth";
 import { toast } from "react-toastify";
+import { getItem } from "../handlers/localStorageHandler";
+import { userApiHandler } from "../handlers/userApiHandler";
+import { apiHandler } from "../handlers/apiHandler";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,6 +12,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const useApiHandler = apiHandler();
+  const userAPI = userApiHandler();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -21,7 +26,17 @@ export default function LoginPage() {
       const response = await login(email, password);
       if (response) {
         toast.success("Login realizado com sucesso!");
-        navigate("/");
+        navigate("/book");
+
+        const tempRecipe = getItem("TempRecipe");
+        console.log(tempRecipe);
+        if (tempRecipe != null) {
+          const userData = await userAPI.getUserData();
+          const userId = userData.id;
+          await useApiHandler.saveRecipe(userId, {
+            content: JSON.parse(tempRecipe),
+          });
+        }
       }
     } catch (err) {
       console.error(err);

@@ -17,11 +17,6 @@ export default function Header() {
         <h1 style={styles.title}>CookAi</h1>
         <p style={styles.text}>Bem vindo ao CookAi!</p>
         <p style={styles.text}>Salve suas receitas e se livre de anúncios!</p>
-        {/* 
-        <p style={styles.text}>
-          Não perca tempo, copie o link da receita e cole aqui
-        </p>
-        <p style={styles.text}>E a mágica acontece!</p> */}
       </div>
       <ProfileDrawer
         visible={drawerVisible}

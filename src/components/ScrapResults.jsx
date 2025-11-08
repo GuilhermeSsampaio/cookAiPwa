@@ -4,42 +4,34 @@ import Recipe from "./Recipe";
 import { useAuth } from "../contexts/auth/useAuth";
 import { apiHandler } from "../handlers/apiHandler";
 import { userApiHandler } from "../handlers/userApiHandler";
-import { toast } from "react-toastify";
 import { ArrowsExpand, BookmarkHeart } from "react-bootstrap-icons";
-// Importe seus hooks/contextos conforme necessário
-// import { useApi } from "@/hooks/useApi";
-// import { useAuth } from "@/contexts/AuthContext";
-// import ModalLogin from "@/components/ModalLogin";
+import { useNavigate } from "react-router-dom";
+import { removeItem, setItem } from "../handlers/localStorageHandler";
 
 export default function ScrapResults({ data }) {
   const [expanded, setExpanded] = useState(false);
   const [savedRecipes, setSavedRecipes] = useState([]);
-  // const useApiHook = useApi();
   const useApiHandler = apiHandler();
   const userAPI = userApiHandler();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { user } = useAuth();
-
-  // Simulação de login para exemplo
-  // const user = false;
+  const navigate = useNavigate();
 
   const handleSave = async () => {
     if (!user) {
+      setItem("TempRecipe", JSON.stringify(data));
       setShowLoginModal(true);
       return;
     }
+
     try {
       const userData = await userAPI.getUserData();
       const userId = userData.id;
-      const res = await useApiHandler.saveRecipe(userId, { content: data });
-      console.log("resposata: " + res);
+      await useApiHandler.saveRecipe(userId, { content: data });
+      removeItem("TempRecipe");
       setSavedRecipes([...savedRecipes, data]);
-      // toast.success("Receita salva com sucesso!");
-      // Toast de sucesso
     } catch (e) {
       console.error("Failed to save recipe", e);
-      toast.error("Não foi possível salvar a receita!");
-      // Toast de erro
     }
   };
 
@@ -47,10 +39,11 @@ export default function ScrapResults({ data }) {
 
   const handleLogin = () => {
     setShowLoginModal(false);
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   const handleCancel = () => {
+    removeItem("TempRecipe");
     setShowLoginModal(false);
   };
 

@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  House,
-  Book,
-  Search,
-  ForkKnife,
-  JournalBookmarkFill,
-} from "react-bootstrap-icons"; // Importe todos os ícones necessários
+import { Search, ForkKnife, JournalBookmarkFill } from "react-bootstrap-icons"; // Importe todos os ícones necessários
 import { useNavigate } from "react-router-dom";
 
 const tabs = [

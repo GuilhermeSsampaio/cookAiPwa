@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown";
 
 export default function Recipe({ visible, onClose, data }) {
   if (!visible) return null;
-
   return (
     <div style={styles.modalOverlay}>
       <div style={styles.modalContainer}>
