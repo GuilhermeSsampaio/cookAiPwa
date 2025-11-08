@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from "../../constants/authContext";
 import { BASE_URL } from "../../constants/constants";
-import { userApiHandler } from "../../handlers/userApiHandler";
+import { usersHandler } from "../../handlers/usersHandler";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const { registerIn, login, signOut } = userApiHandler(user, setUser);
+  const { registerIn, login, signOut } = usersHandler(user, setUser);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("@CookAI:user");

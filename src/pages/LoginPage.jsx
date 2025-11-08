@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth/useAuth";
 import { toast } from "react-toastify";
 import { getItem } from "../handlers/localStorageHandler";
-import { userApiHandler } from "../handlers/userApiHandler";
+import { usersHandler } from "../handlers/usersHandler";
 import { apiHandler } from "../handlers/apiHandler";
 
 export default function LoginPage() {
@@ -13,7 +13,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const useApiHandler = apiHandler();
-  const userAPI = userApiHandler();
+  const useUsersHandler = usersHandler();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -29,9 +29,8 @@ export default function LoginPage() {
         navigate("/book");
 
         const tempRecipe = getItem("TempRecipe");
-        console.log(tempRecipe);
         if (tempRecipe != null) {
-          const userData = await userAPI.getUserData();
+          const userData = await useUsersHandler.getUserData();
           const userId = userData.id;
           await useApiHandler.saveRecipe(userId, {
             content: JSON.parse(tempRecipe),

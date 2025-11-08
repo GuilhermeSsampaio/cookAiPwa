@@ -4,12 +4,12 @@ import { apiHandler } from "../handlers/apiHandler";
 import { useAuth } from "../contexts/auth/useAuth";
 import ModalLogin from "../components/ModalLogin";
 import { useNavigate } from "react-router-dom";
-import { userApiHandler } from "../handlers/userApiHandler";
+import { usersHandler } from "../handlers/usersHandler";
 import { Book } from "react-bootstrap-icons";
 
 export default function BookPage() {
   const useApiHandler = apiHandler();
-  const userAPI = userApiHandler();
+  const useUsersHandler = usersHandler();
   const { user } = useAuth();
   const [recipes, setRecipes] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -21,7 +21,7 @@ export default function BookPage() {
       return;
     }
     try {
-      const userData = await userAPI.getUserData();
+      const userData = await useUsersHandler.getUserData();
       const userId = userData.id;
       const response = await useApiHandler.getSavedRecipes(userId);
       setRecipes(response || []);

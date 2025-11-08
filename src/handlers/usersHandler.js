@@ -1,6 +1,6 @@
 import { api } from "../constants/constants";
 
-export const userApiHandler = (user, setUser) => {
+export const usersHandler = (user, setUser) => {
   const registerIn = async (username, email, password) => {
     const userData = {
       username: username,

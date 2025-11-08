@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import Recipe from "./Recipe";
 import { useAuth } from "../contexts/auth/useAuth";
 import { apiHandler } from "../handlers/apiHandler";
-import { userApiHandler } from "../handlers/userApiHandler";
+import { usersHandler } from "../handlers/usersHandler";
 import { ArrowsExpand, BookmarkHeart } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { removeItem, setItem } from "../handlers/localStorageHandler";
@@ -12,7 +12,7 @@ export default function ScrapResults({ data }) {
   const [expanded, setExpanded] = useState(false);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const useApiHandler = apiHandler();
-  const userAPI = userApiHandler();
+  const useUsersHandler = usersHandler();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function ScrapResults({ data }) {
     }
 
     try {
-      const userData = await userAPI.getUserData();
+      const userData = await useUsersHandler.getUserData();
       const userId = userData.id;
       await useApiHandler.saveRecipe(userId, { content: data });
       removeItem("TempRecipe");
