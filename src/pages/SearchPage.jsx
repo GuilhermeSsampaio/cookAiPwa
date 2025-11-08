@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { apiHandler } from "../handlers/apiHandler";
 import Recipe from "../components/Recipe";
 import { toast } from "react-toastify";
+import Spinner from "../components/Spinner";
+import { useSaveRecipe } from "../hooks/useSaveRecipes";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -9,6 +11,8 @@ export default function SearchPage() {
   const [results, setResults] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const useApiHandler = apiHandler();
+  const { saveRecipe, showLoginModal, handleLogin, handleCancel } =
+    useSaveRecipe();
 
   const handleSearch = async () => {
     if (!query) {
@@ -59,7 +63,7 @@ export default function SearchPage() {
               fontWeight: "bold",
             }}
           >
-            ⏳
+            <Spinner />
           </span>
         </div>
       )}
@@ -73,21 +77,121 @@ export default function SearchPage() {
           <div
             key={index}
             style={styles.recipeCard}
+            // onClick para expandir receita
             onClick={() =>
               setSelectedRecipe(`# ${item.title}\n\n${item.description}`)
             }
           >
             <div style={styles.recipeTitle}>{item.title}</div>
             <div style={styles.recipeDescription}>{item.description}</div>
+            <button
+              style={{
+                marginTop: 8,
+                background: "#ed4f27ff",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+              onClick={(e) => {
+                e.stopPropagation(); // para não abrir o modal ao salvar
+                saveRecipe(`# ${item.title}\n\n${item.description}`);
+              }}
+            >
+              Salvar
+            </button>
           </div>
         ))}
       </div>
 
+      {/* Modal de login, igual ao ScrapResults */}
+      {showLoginModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.3)",
+            zIndex: 3000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 12,
+              padding: 32,
+              boxShadow: "0 4px 24px rgba(0,0,0,0.15)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                color: "#ed4f27ff",
+                marginBottom: 24,
+              }}
+            >
+              Faça login para salvar receitas
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 16,
+              }}
+            >
+              <button
+                style={{
+                  backgroundColor: "#ed4f27ff",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "8px 20px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  fontSize: 15,
+                }}
+                onClick={handleLogin}
+              >
+                Login
+              </button>
+              <button
+                style={{
+                  backgroundColor: "#ed4f27ff",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "8px 20px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  fontSize: 15,
+                }}
+                onClick={handleCancel}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {selectedRecipe && (
         <Recipe
+          showSaveButton={true}
           visible={!!selectedRecipe}
           onClose={() => setSelectedRecipe(null)}
           data={selectedRecipe}
+          handleSave={saveRecipe}
         />
       )}
     </div>

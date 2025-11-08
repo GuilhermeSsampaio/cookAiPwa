@@ -1,8 +1,14 @@
 import React from "react";
-import { XCircle } from "react-bootstrap-icons";
+import { BookmarkHeart, XCircle } from "react-bootstrap-icons";
 import ReactMarkdown from "react-markdown";
 
-export default function Recipe({ visible, onClose, data }) {
+export default function Recipe({
+  visible,
+  onClose,
+  data,
+  showSaveButton,
+  handleSave,
+}) {
   if (!visible) return null;
   return (
     <div style={styles.modalOverlay}>
@@ -14,8 +20,21 @@ export default function Recipe({ visible, onClose, data }) {
             </span>
           </button>
           <span style={styles.modalTitle}>Receita Completa</span>
+          {showSaveButton ? (
+            <button style={styles.actionBtn} onClick={() => handleSave(data)}>
+              <span
+                role="img"
+                aria-label="salvar"
+                style={{ fontSize: 20, color: "#ed4f27ff" }}
+              >
+                <BookmarkHeart size={28} />
+              </span>
+              <span style={styles.actionText}>Salvar</span>
+            </button>
+          ) : null}
           <div style={{ width: 28 }} />
         </div>
+
         <div style={styles.modalContent}>
           <ReactMarkdown components={markdownComponents}>{data}</ReactMarkdown>
         </div>
@@ -67,6 +86,7 @@ const styles = {
     justifyContent: "space-between",
     padding: 16,
     borderBottom: "1px solid #eee",
+    gap: 8,
   },
   modalTitle: {
     fontSize: 18,
@@ -89,5 +109,22 @@ const styles = {
     flex: 1,
     padding: 16,
     overflowY: "auto",
+  },
+  actionBtn: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f6a26133",
+    borderRadius: 8,
+    padding: "6px 12px",
+    marginLeft: 8,
+    border: "none",
+    cursor: "pointer",
+  },
+  actionText: {
+    marginLeft: 6,
+    color: "#ed4f27ff",
+    fontWeight: "bold",
+    fontSize: 15,
   },
 };

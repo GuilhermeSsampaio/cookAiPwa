@@ -1,51 +1,16 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import Recipe from "./Recipe";
-import { useAuth } from "../contexts/auth/useAuth";
-import { apiHandler } from "../handlers/apiHandler";
-import { usersHandler } from "../handlers/usersHandler";
 import { ArrowsExpand, BookmarkHeart } from "react-bootstrap-icons";
-import { useNavigate } from "react-router-dom";
-import { removeItem, setItem } from "../handlers/localStorageHandler";
+import { useSaveRecipe } from "../hooks/useSaveRecipes";
 
 export default function ScrapResults({ data }) {
   const [expanded, setExpanded] = useState(false);
-  const [savedRecipes, setSavedRecipes] = useState([]);
-  const useApiHandler = apiHandler();
-  const useUsersHandler = usersHandler();
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const { user } = useAuth();
-  const navigate = useNavigate();
 
-  const handleSave = async () => {
-    if (!user) {
-      setItem("TempRecipe", JSON.stringify(data));
-      setShowLoginModal(true);
-      return;
-    }
-
-    try {
-      const userData = await useUsersHandler.getUserData();
-      const userId = userData.id;
-      await useApiHandler.saveRecipe(userId, { content: data });
-      removeItem("TempRecipe");
-      setSavedRecipes([...savedRecipes, data]);
-    } catch (e) {
-      console.error("Failed to save recipe", e);
-    }
-  };
+  const { saveRecipe, showLoginModal, handleLogin, handleCancel } =
+    useSaveRecipe();
 
   const handleCloseRecipe = () => setExpanded(false);
-
-  const handleLogin = () => {
-    setShowLoginModal(false);
-    navigate("/login");
-  };
-
-  const handleCancel = () => {
-    removeItem("TempRecipe");
-    setShowLoginModal(false);
-  };
 
   if (!data) {
     return (
@@ -68,7 +33,7 @@ export default function ScrapResults({ data }) {
           </span>
           <span style={styles.actionText}>Expandir</span>
         </button>
-        <button style={styles.actionBtn} onClick={handleSave}>
+        <button style={styles.actionBtn} onClick={() => saveRecipe(data)}>
           <span
             role="img"
             aria-label="salvar"

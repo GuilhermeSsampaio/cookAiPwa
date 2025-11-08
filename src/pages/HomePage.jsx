@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/auth/useAuth";
 import { apiHandler } from "../handlers/apiHandler";
 import ScrapBar from "../components/ScrapBar";
 import ScrapResults from "../components/ScrapResults";
+import Spinner from "../components/Spinner";
 
 export default function Home() {
   const { user } = useAuth();
@@ -42,13 +43,7 @@ export default function Home() {
           className="d-flex justify-content-center align-items-center"
           style={{ minHeight: "200px" }}
         >
-          <div
-            className="spinner-border text-primary"
-            role="status"
-            style={{ width: "3rem", height: "3rem" }}
-          >
-            <span className="visually-hidden">Carregando...</span>
-          </div>
+          <Spinner />
         </div>
       ) : error ? (
         <div className="alert alert-danger text-center mt-4" role="alert">
