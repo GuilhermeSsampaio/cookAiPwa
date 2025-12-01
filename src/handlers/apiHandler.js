@@ -4,7 +4,7 @@ import { api } from "../constants/constants";
 export function apiHandler() {
   const getSavedRecipes = async (userId) => {
     try {
-      const response = await api.get(`/cook_ai/recipes/user/${userId}`);
+      const response = await api.get(`/cook_ai/recipes/cookai_user/${userId}`);
       if (!response) toast.promise("Carregando...");
       return response.data;
     } catch (error) {
@@ -16,7 +16,7 @@ export function apiHandler() {
   const saveRecipe = async (userId, dados) => {
     try {
       const response = await api.post(
-        `/cook_ai/recipes/user/${userId}/save`,
+        `/cook_ai/recipes/cookai_user/${userId}/save`,
         dados
       );
       toast.success("Receita salva com sucesso!");
