@@ -16,7 +16,7 @@ export function apiHandler() {
   const saveRecipe = async (userId, dados) => {
     try {
       const response = await api.post(
-        `/cook_ai/recipes/cookai_user/${userId}/save`,
+        `/cook_ai/recipes/user/${userId}/save`,
         dados
       );
       toast.success("Receita salva com sucesso!");
