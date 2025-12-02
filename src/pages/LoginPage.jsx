@@ -31,10 +31,12 @@ export default function LoginPage() {
         const tempRecipe = getItem("TempRecipe");
         if (tempRecipe != null) {
           const userData = await useUsersHandler.getUserData();
-          const userId = userData.id;
-          await useApiHandler.saveRecipe(userId, {
-            content: JSON.parse(tempRecipe),
-          });
+          const cookaiUserId = userData.cookai_user_id;
+          if (cookaiUserId) {
+            await useApiHandler.saveRecipe(cookaiUserId, {
+              content: JSON.parse(tempRecipe),
+            });
+          }
         }
       }
     } catch (err) {

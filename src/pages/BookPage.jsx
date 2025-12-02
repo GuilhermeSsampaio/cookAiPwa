@@ -22,8 +22,11 @@ export default function BookPage() {
     }
     try {
       const userData = await useUsersHandler.getUserData();
-      const userId = userData.id;
-      const response = await useApiHandler.getSavedRecipes(userId);
+      const cookaiUserId = userData.cookai_user_id;
+      if (!cookaiUserId) {
+        throw new Error("CookAI user ID not found");
+      }
+      const response = await useApiHandler.getSavedRecipes(cookaiUserId);
       setRecipes(response || []);
     } catch (error) {
       console.error("Failed to fetch recipes", error);

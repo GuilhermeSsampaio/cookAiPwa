@@ -28,7 +28,7 @@ export const usersHandler = (user, setUser) => {
       password: password,
     };
     try {
-      const response = await api.post("auth/users/login", userData);
+      const response = await api.post("cook_ai/cookai/users/login", userData);
       const data = response.data; // Corrigido: axios já retorna o JSON parseado
 
       localStorage.setItem("@CookAI:user", JSON.stringify(data));

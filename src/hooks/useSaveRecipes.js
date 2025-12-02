@@ -20,8 +20,11 @@ export function useSaveRecipe() {
     }
     try {
       const userData = await useUsersHandler.getUserData();
-      const userId = userData.id;
-      await useApiHandler.saveRecipe(userId, { content: data });
+      const cookaiUserId = userData.cookai_user_id;
+      if (!cookaiUserId) {
+        throw new Error("CookAI user ID not found");
+      }
+      await useApiHandler.saveRecipe(cookaiUserId, { content: data });
       removeItem("TempRecipe");
       if (onSuccess) onSuccess();
     } catch (e) {
