@@ -6,6 +6,7 @@ import ModalLogin from "../components/ModalLogin";
 import { useNavigate } from "react-router-dom";
 import { usersHandler } from "../handlers/usersHandler";
 import { Book } from "react-bootstrap-icons";
+import SearchBar from "../components/Searchbar";
 
 export default function BookPage() {
   const useApiHandler = apiHandler();
@@ -13,6 +14,8 @@ export default function BookPage() {
   const { user } = useAuth();
   const [recipes, setRecipes] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
   const navigate = useNavigate();
 
   const getRecipes = async () => {
@@ -28,6 +31,7 @@ export default function BookPage() {
       }
       const response = await useApiHandler.getSavedRecipes(cookaiUserId);
       setRecipes(response || []);
+      setFilteredRecipes(response || []); // Atualiza os recipes filtrados também
     } catch (error) {
       console.error("Failed to fetch recipes", error);
     }
@@ -59,8 +63,13 @@ export default function BookPage() {
         }}
       >
         <Book /> Recipes Book
+        <SearchBar
+          searchTerm={searchTerm}
+          recipes={recipes}
+          onFilteredRecipes={setFilteredRecipes} // Adiciona o callback para atualizar recipes filtrados
+        />
       </div>
-      <RecipesList recipes={recipes} />
+      <RecipesList recipes={filteredRecipes} /> {/* Usa filteredRecipes aqui */}
       <ModalLogin
         visible={showLoginModal}
         onLogin={handleLogin}
