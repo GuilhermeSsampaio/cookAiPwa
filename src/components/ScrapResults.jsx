@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import Recipe from "./Recipe";
-import { ArrowsExpand, BookmarkHeart } from "react-bootstrap-icons";
+import {
+  ArrowsExpand,
+  BookmarkHeart,
+  XCircle,
+  XCircleFill,
+} from "react-bootstrap-icons";
 import { useSaveRecipe } from "../hooks/useSaveRecipes";
 
 export default function ScrapResults({ data }) {
   const [expanded, setExpanded] = useState(false);
-
+  const [resultContent, setResultContent] = useState(data);
   const { saveRecipe, showLoginModal, handleLogin, handleCancel } =
     useSaveRecipe();
 
   const handleCloseRecipe = () => setExpanded(false);
+
+  const cleanRecipe = () => {
+    setResultContent("");
+  };
 
   if (!data) {
     return (
@@ -23,6 +32,14 @@ export default function ScrapResults({ data }) {
   return (
     <>
       <div style={styles.actions}>
+        <span
+          role="img"
+          aria-label="fechar"
+          style={{ cursor: "pointer", fontSize: 20, color: "#ed4f27ff" }}
+          onClick={cleanRecipe}
+        >
+          <XCircleFill size={24} />
+        </span>
         <button style={styles.actionBtn} onClick={() => setExpanded(true)}>
           <span
             role="img"
@@ -45,9 +62,15 @@ export default function ScrapResults({ data }) {
         </button>
       </div>
       <div style={styles.card}>
-        <ReactMarkdown components={markdownComponents}>{data}</ReactMarkdown>
+        <ReactMarkdown components={markdownComponents}>
+          {resultContent}
+        </ReactMarkdown>
       </div>
-      <Recipe visible={expanded} onClose={handleCloseRecipe} data={data} />
+      <Recipe
+        visible={expanded}
+        onClose={handleCloseRecipe}
+        data={resultContent}
+      />
       {/* Modal de Login */}
       {showLoginModal && (
         <div style={styles.modalOverlay}>

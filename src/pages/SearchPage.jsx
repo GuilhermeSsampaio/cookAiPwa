@@ -79,11 +79,33 @@ export default function SearchPage() {
             style={styles.recipeCard}
             // onClick para expandir receita
             onClick={() =>
-              setSelectedRecipe(`# ${item.title}\n\n${item.description}`)
+              setSelectedRecipe(
+                `# ${item.title}\n\n**Fonte:** ${item.font}\n**Link:** [${item.link}](${item.link})\n\n${item.description}`
+              )
             }
           >
             <div style={styles.recipeTitle}>{item.title}</div>
-            <div style={styles.recipeDescription}>{item.description}</div>
+            <div style={styles.recipeFont}>
+              {item.font}
+              {item.link && (
+                <>
+                  {" - "}
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={styles.recipeLink}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Ver receita original 🔗
+                  </a>
+                </>
+              )}
+            </div>
+            <div style={styles.recipeDescription}>
+              {item.description.substring(0, 150)}...
+            </div>
+
             <button
               style={{
                 marginTop: 8,
@@ -97,7 +119,9 @@ export default function SearchPage() {
               }}
               onClick={(e) => {
                 e.stopPropagation(); // para não abrir o modal ao salvar
-                saveRecipe(`# ${item.title}\n\n${item.description}`);
+                saveRecipe(
+                  `# ${item.title}\n\n**Fonte:** ${item.font}\n**Link:** [${item.link}](${item.link})\n\n${item.description}`
+                );
               }}
             >
               Salvar
@@ -265,10 +289,23 @@ const styles = {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
+    marginBottom: 4,
+  },
+  recipeFont: {
+    fontSize: 14,
+    color: "#ed4f27ff",
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  recipeLink: {
+    color: "#ed4f27ff",
+    textDecoration: "none",
+    fontSize: 16,
   },
   recipeDescription: {
     fontSize: 14,
     color: "#666",
     marginTop: 4,
+    lineHeight: "1.4",
   },
 };

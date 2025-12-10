@@ -47,12 +47,25 @@ const markdownComponents = {
   h2: ({ ...props }) => <h2 style={markdownStyles.heading2} {...props} />,
   strong: ({ ...props }) => <strong style={markdownStyles.strong} {...props} />,
   p: ({ ...props }) => <p style={markdownStyles.body} {...props} />,
+  a: ({ ...props }) => (
+    <a
+      style={markdownStyles.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    />
+  ),
 };
 
 const markdownStyles = {
   body: { color: "#444", fontSize: 15, margin: 0 },
   heading2: { color: "#ed4f27ff", fontSize: 20, marginTop: 12 },
   strong: { fontWeight: "bold", color: "#ed4f27ff" },
+  link: {
+    color: "#ed4f27ff",
+    textDecoration: "underline",
+    cursor: "pointer",
+  },
 };
 
 const styles = {
