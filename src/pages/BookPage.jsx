@@ -8,6 +8,7 @@ import { usersHandler } from "../handlers/usersHandler";
 import { Book, FilePdf } from "react-bootstrap-icons";
 import SearchBar from "../components/Searchbar";
 import { exportRecipesToPDF } from "../handlers/pdfHandler";
+import { indexedDbHandler } from "../handlers/indexedDbHandler";
 
 export default function BookPage() {
   const useApiHandler = apiHandler();
@@ -26,17 +27,40 @@ export default function BookPage() {
       setShowLoginModal(true);
       return;
     }
-    try {
-      const userData = await useUsersHandler.getUserData();
-      const cookaiUserId = userData.cookai_user_id;
-      if (!cookaiUserId) {
-        throw new Error("CookAI user ID not found");
+    if (navigator.onLine) {
+      try {
+        const userData = await useUsersHandler.getUserData();
+        const cookaiUserId = userData.cookai_user_id;
+        if (!cookaiUserId) {
+          throw new Error("CookAI user ID not found");
+        }
+        const response = await useApiHandler.getSavedRecipes(cookaiUserId);
+        setRecipes(response || []);
+        setFilteredRecipes(response || []);
+        // Salva todas as receitas no IndexedDB para uso offline
+        try {
+          await indexedDbHandler.clearRecipes();
+          if (Array.isArray(response)) {
+            for (const recipe of response) {
+              await indexedDbHandler.addRecipe(recipe);
+            }
+          }
+        } catch (e) {
+          console.error("Erro ao salvar receitas no IndexedDB", e);
+        }
+      } catch (error) {
+        console.error("Failed to fetch recipes", error);
       }
-      const response = await useApiHandler.getSavedRecipes(cookaiUserId);
-      setRecipes(response || []);
-      setFilteredRecipes(response || []); // Atualiza os recipes filtrados também
-    } catch (error) {
-      console.error("Failed to fetch recipes", error);
+    } else {
+      // OFFLINE: buscar do IndexedDB
+      try {
+        const offlineRecipes = await indexedDbHandler.getAllRecipes();
+        setRecipes(offlineRecipes || []);
+        setFilteredRecipes(offlineRecipes || []);
+      } catch (e) {
+        setRecipes([]);
+        setFilteredRecipes([]);
+      }
     }
   };
 

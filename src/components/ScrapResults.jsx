@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import Recipe from "./Recipe";
 import {
@@ -11,17 +11,43 @@ import { useSaveRecipe } from "../hooks/useSaveRecipes";
 
 export default function ScrapResults({ data }) {
   const [expanded, setExpanded] = useState(false);
-  const [resultContent, setResultContent] = useState(data);
+  // Sempre mostra o último scrap salvo, a não ser que o usuário limpe explicitamente
+  const [resultContent, setResultContent] = useState(() => {
+    try {
+      if (data !== undefined && data !== null && data !== "") {
+        localStorage.setItem("lastScrapRecipe", JSON.stringify(data));
+        return data;
+      }
+      const stored = localStorage.getItem("lastScrapRecipe");
+      return stored ? JSON.parse(stored) : "";
+    } catch {
+      return "";
+    }
+  });
+
+  // Se data mudar para um valor válido, atualiza o localStorage e o conteúdo
+  useEffect(() => {
+    if (data !== undefined && data !== null && data !== "") {
+      setResultContent(data);
+      try {
+        localStorage.setItem("lastScrapRecipe", JSON.stringify(data));
+      } catch {}
+    }
+  }, [data]);
   const { saveRecipe, showLoginModal, handleLogin, handleCancel } =
     useSaveRecipe();
 
   const handleCloseRecipe = () => setExpanded(false);
 
+  // Limpa o resultado e o localStorage explicitamente
   const cleanRecipe = () => {
     setResultContent("");
+    try {
+      localStorage.removeItem("lastScrapRecipe");
+    } catch {}
   };
 
-  if (!data) {
+  if (!resultContent) {
     return (
       <div style={styles.empty}>
         <span style={markdownStyles.body}>Nenhuma receita encontrada.</span>
