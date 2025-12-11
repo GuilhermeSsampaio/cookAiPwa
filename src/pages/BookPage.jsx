@@ -17,6 +17,8 @@ export default function BookPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [exporting, setExporting] = useState(false);
+  const [progress, setProgress] = useState({ step: "", current: 0, total: 0 });
   const navigate = useNavigate();
 
   const getRecipes = async () => {
@@ -58,17 +60,97 @@ export default function BookPage() {
       alert("Não há receitas para exportar");
       return;
     }
+    setExporting(true);
+    setProgress({ step: "summary", current: 0, total: filteredRecipes.length });
 
     try {
-      await exportRecipesToPDF(filteredRecipes);
+      await exportRecipesToPDF(filteredRecipes, (p) => setProgress(p));
     } catch (error) {
       console.error("Erro ao exportar PDF:", error);
       alert("Erro ao exportar PDF");
+    } finally {
+      // pequena espera para UX antes de ocultar
+      setTimeout(() => setExporting(false), 500);
     }
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#fafafa" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#fafafa",
+        position: "relative",
+      }}
+    >
+      {/* Indicador de geração */}
+      {exporting && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.25)",
+            zIndex: 4000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 12,
+              padding: 24,
+              boxShadow: "0 4px 24px rgba(0,0,0,0.15)",
+              minWidth: 280,
+            }}
+          >
+            <div
+              style={{
+                fontWeight: "bold",
+                color: "#ed4f27ff",
+                fontSize: 18,
+                marginBottom: 8,
+              }}
+            >
+              Gerando PDF...
+            </div>
+            <div style={{ color: "#555", marginBottom: 12 }}>
+              {progress.step === "summary"
+                ? "Criando sumário"
+                : `Processando receita ${progress.current} de ${progress.total}`}
+            </div>
+            <div
+              style={{
+                width: "100%",
+                height: 8,
+                background: "#eee",
+                borderRadius: 8,
+              }}
+            >
+              <div
+                style={{
+                  width: `${
+                    progress.total
+                      ? Math.min(
+                          100,
+                          Math.round((progress.current / progress.total) * 100)
+                        )
+                      : 10
+                  }%`,
+                  height: 8,
+                  background: "#ed4f27ff",
+                  borderRadius: 8,
+                  transition: "width 200ms ease",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div
         style={{
           fontSize: 24,
@@ -81,7 +163,7 @@ export default function BookPage() {
         <SearchBar
           searchTerm={searchTerm}
           recipes={recipes}
-          onFilteredRecipes={setFilteredRecipes} // Adiciona o callback para atualizar recipes filtrados
+          onFilteredRecipes={setFilteredRecipes}
         />
       </div>
       <div
@@ -96,24 +178,26 @@ export default function BookPage() {
 
         <button
           onClick={handleExportPDF}
+          disabled={exporting}
           style={{
-            backgroundColor: "#ed4f27ff",
+            backgroundColor: exporting ? "#f1a48b" : "#ed4f27ff",
             color: "#fff",
             border: "none",
             borderRadius: 8,
             padding: "10px 16px",
-            cursor: "pointer",
+            cursor: exporting ? "not-allowed" : "pointer",
             display: "flex",
             alignItems: "center",
             gap: 8,
             fontWeight: "bold",
+            opacity: exporting ? 0.8 : 1,
           }}
         >
           <FilePdf size={20} />
-          Exportar PDF
+          {exporting ? "Gerando..." : "Exportar PDF"}
         </button>
       </div>
-      <RecipesList recipes={filteredRecipes} /> {/* Usa filteredRecipes aqui */}
+      <RecipesList recipes={filteredRecipes} />
       <ModalLogin
         visible={showLoginModal}
         onLogin={handleLogin}
