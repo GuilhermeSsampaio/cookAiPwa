@@ -5,8 +5,9 @@ import { useAuth } from "../contexts/auth/useAuth";
 import ModalLogin from "../components/ModalLogin";
 import { useNavigate } from "react-router-dom";
 import { usersHandler } from "../handlers/usersHandler";
-import { Book } from "react-bootstrap-icons";
+import { Book, FilePdf } from "react-bootstrap-icons";
 import SearchBar from "../components/Searchbar";
+import { exportRecipesToPDF } from "../handlers/pdfHandler";
 
 export default function BookPage() {
   const useApiHandler = apiHandler();
@@ -52,6 +53,20 @@ export default function BookPage() {
     setShowLoginModal(false);
   };
 
+  const handleExportPDF = async () => {
+    if (filteredRecipes.length === 0) {
+      alert("Não há receitas para exportar");
+      return;
+    }
+
+    try {
+      await exportRecipesToPDF(filteredRecipes);
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      alert("Erro ao exportar PDF");
+    }
+  };
+
   return (
     <div style={{ minHeight: "100vh", background: "#fafafa" }}>
       <div
@@ -69,6 +84,35 @@ export default function BookPage() {
           onFilteredRecipes={setFilteredRecipes} // Adiciona o callback para atualizar recipes filtrados
         />
       </div>
+      <div
+        style={{
+          margin: "16px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <div style={styles.title}>Receitas Salvas</div>
+
+        <button
+          onClick={handleExportPDF}
+          style={{
+            backgroundColor: "#ed4f27ff",
+            color: "#fff",
+            border: "none",
+            borderRadius: 8,
+            padding: "10px 16px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontWeight: "bold",
+          }}
+        >
+          <FilePdf size={20} />
+          Exportar PDF
+        </button>
+      </div>
       <RecipesList recipes={filteredRecipes} /> {/* Usa filteredRecipes aqui */}
       <ModalLogin
         visible={showLoginModal}
@@ -78,3 +122,11 @@ export default function BookPage() {
     </div>
   );
 }
+
+const styles = {
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+};
