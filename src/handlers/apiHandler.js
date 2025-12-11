@@ -55,10 +55,39 @@ export function apiHandler() {
     }
   };
 
+  const updateRecipe = async (cookaiUserId, recipeId, dados) => {
+    try {
+      const response = await api.put(
+        `/cook_ai/recipes/cookai_user/${cookaiUserId}/${recipeId}`,
+        dados
+      );
+      toast.success("Receita atualizada com sucesso!");
+      return response.data;
+    } catch (error) {
+      toast.error("Erro ao atualizar receita. Tente novamente mais tarde.");
+      throw error;
+    }
+  };
+
+  const deleteRecipe = async (cookaiUserId, recipeId) => {
+    try {
+      const response = await api.delete(
+        `/cook_ai/recipes/cookai_user/${cookaiUserId}/${recipeId}`
+      );
+      toast.success("Receita excluída com sucesso!");
+      return response.data;
+    } catch (error) {
+      toast.error("Erro ao excluir receita. Tente novamente mais tarde.");
+      throw error;
+    }
+  };
+
   return {
     getSavedRecipes,
     saveRecipe,
     scrapRecipe,
     searchRecipes,
+    updateRecipe,
+    deleteRecipe,
   };
 }

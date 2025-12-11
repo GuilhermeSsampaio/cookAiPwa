@@ -1,15 +1,6 @@
-import React, { useState } from "react";
-import Recipe from "./Recipe";
+import React from "react";
 
-export default function RecipesList({ recipes }) {
-  const [expanded, setExpanded] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-
-  const handleCloseRecipe = () => {
-    setExpanded(false);
-    setSelectedRecipe(null);
-  };
-
+export default function RecipesList({ recipes, onRecipeClick }) {
   return (
     <div style={styles.listContainer}>
       {recipes && recipes.length > 0 ? (
@@ -17,10 +8,7 @@ export default function RecipesList({ recipes }) {
           <div
             key={item.id}
             style={styles.card}
-            onClick={() => {
-              setSelectedRecipe(item.content);
-              setExpanded(true);
-            }}
+            onClick={() => onRecipeClick && onRecipeClick(item)}
           >
             <div style={styles.title}>{item.title}</div>
             <div style={styles.date}>
@@ -35,11 +23,6 @@ export default function RecipesList({ recipes }) {
           <span style={styles.emptyText}>Nenhuma receita salva.</span>
         </div>
       )}
-      <Recipe
-        visible={expanded}
-        onClose={handleCloseRecipe}
-        data={selectedRecipe}
-      />
     </div>
   );
 }

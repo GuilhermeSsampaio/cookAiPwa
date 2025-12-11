@@ -60,6 +60,17 @@ export const indexedDbHandler = {
     });
   },
 
+  async updateRecipe(recipe) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction([RECIPES_STORE], "readwrite");
+      const store = tx.objectStore(RECIPES_STORE);
+      const req = store.put(recipe);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject("Erro ao atualizar receita");
+    });
+  },
+
   async clearRecipes() {
     const db = await openDB();
     return new Promise((resolve, reject) => {

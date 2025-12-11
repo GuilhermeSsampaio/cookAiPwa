@@ -1,5 +1,10 @@
 import React from "react";
-import { BookmarkHeart, XCircle } from "react-bootstrap-icons";
+import {
+  BookmarkHeart,
+  XCircle,
+  PencilSquare,
+  Trash,
+} from "react-bootstrap-icons";
 import ReactMarkdown from "react-markdown";
 
 export default function Recipe({
@@ -8,6 +13,9 @@ export default function Recipe({
   data,
   showSaveButton,
   handleSave,
+  showEditButtons,
+  onEdit,
+  onDelete,
 }) {
   if (!visible) return null;
   return (
@@ -31,6 +39,16 @@ export default function Recipe({
               </span>
               <span style={styles.actionText}>Salvar</span>
             </button>
+          ) : null}
+          {showEditButtons ? (
+            <div style={styles.editButtonsContainer}>
+              <button style={styles.editBtn} onClick={onEdit}>
+                <PencilSquare size={24} />
+              </button>
+              <button style={styles.deleteBtn} onClick={onDelete}>
+                <Trash size={24} />
+              </button>
+            </div>
           ) : null}
           <div style={{ width: 28 }} />
         </div>
@@ -139,5 +157,32 @@ const styles = {
     color: "#ed4f27ff",
     fontWeight: "bold",
     fontSize: 15,
+  },
+  editButtonsContainer: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 8,
+  },
+  editBtn: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#4285f433",
+    borderRadius: 8,
+    padding: 8,
+    border: "none",
+    cursor: "pointer",
+    color: "#4285f4",
+  },
+  deleteBtn: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ea433533",
+    borderRadius: 8,
+    padding: 8,
+    border: "none",
+    cursor: "pointer",
+    color: "#ea4335",
   },
 };

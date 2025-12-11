@@ -9,6 +9,8 @@ import { Book, FilePdf } from "react-bootstrap-icons";
 import SearchBar from "../components/Searchbar";
 import { exportRecipesToPDF } from "../handlers/pdfHandler";
 import { indexedDbHandler } from "../handlers/indexedDbHandler";
+import RecipeEditor from "../components/RecipeEditor";
+import Recipe from "../components/Recipe";
 
 export default function BookPage() {
   const useApiHandler = apiHandler();
@@ -20,6 +22,10 @@ export default function BookPage() {
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [exporting, setExporting] = useState(false);
   const [progress, setProgress] = useState({ step: "", current: 0, total: 0 });
+  const [showEditor, setShowEditor] = useState(false);
+  const [editingRecipe, setEditingRecipe] = useState(null);
+  const [showRecipeModal, setShowRecipeModal] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
   const navigate = useNavigate();
 
   const getRecipes = async () => {
@@ -95,6 +101,77 @@ export default function BookPage() {
     } finally {
       // pequena espera para UX antes de ocultar
       setTimeout(() => setExporting(false), 500);
+    }
+  };
+
+  const handleRecipeClick = (recipe) => {
+    setSelectedRecipe(recipe);
+    setShowRecipeModal(true);
+  };
+
+  const handleEditRecipe = () => {
+    setShowRecipeModal(false);
+    setEditingRecipe(selectedRecipe);
+    setShowEditor(true);
+  };
+
+  const handleDeleteRecipe = async () => {
+    if (!window.confirm("Tem certeza que deseja excluir esta receita?")) {
+      return;
+    }
+
+    try {
+      const userData = await useUsersHandler.getUserData();
+      const cookaiUserId = userData.cookai_user_id;
+
+      if (navigator.onLine) {
+        await useApiHandler.deleteRecipe(cookaiUserId, selectedRecipe.id);
+      }
+
+      // Remove do IndexedDB
+      await indexedDbHandler.removeRecipe(selectedRecipe.id);
+
+      // Atualiza a lista local
+      const updatedRecipes = recipes.filter((r) => r.id !== selectedRecipe.id);
+      setRecipes(updatedRecipes);
+      setFilteredRecipes(updatedRecipes);
+      setShowRecipeModal(false);
+    } catch (error) {
+      console.error("Erro ao excluir receita:", error);
+    }
+  };
+
+  const handleSaveEdit = async (updatedData) => {
+    try {
+      const userData = await useUsersHandler.getUserData();
+      const cookaiUserId = userData.cookai_user_id;
+
+      const updatedRecipe = {
+        ...editingRecipe,
+        title: updatedData.title,
+        content: updatedData.content,
+      };
+
+      if (navigator.onLine) {
+        await useApiHandler.updateRecipe(cookaiUserId, editingRecipe.id, {
+          title: updatedData.title,
+          content: updatedData.content,
+        });
+      }
+
+      // Atualiza no IndexedDB
+      await indexedDbHandler.updateRecipe(updatedRecipe);
+
+      // Atualiza a lista local
+      const updatedRecipes = recipes.map((r) =>
+        r.id === editingRecipe.id ? updatedRecipe : r
+      );
+      setRecipes(updatedRecipes);
+      setFilteredRecipes(updatedRecipes);
+      setShowEditor(false);
+      setEditingRecipe(null);
+    } catch (error) {
+      console.error("Erro ao salvar receita:", error);
     }
   };
 
@@ -221,11 +298,34 @@ export default function BookPage() {
           {exporting ? "Gerando..." : "Exportar PDF"}
         </button>
       </div>
-      <RecipesList recipes={filteredRecipes} />
+      <RecipesList
+        recipes={filteredRecipes}
+        onRecipeClick={handleRecipeClick}
+      />
       <ModalLogin
         visible={showLoginModal}
         onLogin={handleLogin}
         onCancel={handleCancel}
+      />
+      <RecipeEditor
+        visible={showEditor}
+        onClose={() => {
+          setShowEditor(false);
+          setEditingRecipe(null);
+        }}
+        recipe={editingRecipe}
+        onSave={handleSaveEdit}
+      />
+      <Recipe
+        visible={showRecipeModal}
+        onClose={() => {
+          setShowRecipeModal(false);
+          setSelectedRecipe(null);
+        }}
+        data={selectedRecipe?.content || ""}
+        showEditButtons={true}
+        onEdit={handleEditRecipe}
+        onDelete={handleDeleteRecipe}
       />
     </div>
   );
