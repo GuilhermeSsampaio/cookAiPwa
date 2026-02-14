@@ -22,17 +22,12 @@ export default function SearchPage() {
 
     setLoading(true);
     try {
-      const response = await useApiHandler.searchRecipes(query);
-      // Limpa a resposta para garantir que seja um JSON válido
-      const cleanedResponse = response.recipes
-        .replace(/```json|```/g, "")
-        .trim();
-      const recipes = JSON.parse(cleanedResponse);
+      const recipes = await useApiHandler.searchRecipes(query);
       setResults(recipes);
     } catch (error) {
       console.error("Erro ao buscar receitas:", error);
       toast.error(
-        "Não foi possível buscar receitas. Tente novamente mais tarde."
+        "Não foi possível buscar receitas. Tente novamente mais tarde.",
       );
     } finally {
       setLoading(false);
@@ -78,11 +73,7 @@ export default function SearchPage() {
             key={index}
             style={styles.recipeCard}
             // onClick para expandir receita
-            onClick={() =>
-              setSelectedRecipe(
-                `# ${item.title}\n\n**Fonte:** ${item.font}\n**Link:** [${item.link}](${item.link})\n\n${item.description}`
-              )
-            }
+            onClick={() => setSelectedRecipe(item)}
           >
             <div style={styles.recipeTitle}>{item.title}</div>
             <div style={styles.recipeFont}>
@@ -103,7 +94,7 @@ export default function SearchPage() {
               )}
             </div>
             <div style={styles.recipeDescription}>
-              {item.description.substring(0, 150)}...
+              {item.content.substring(0, 150)}...
             </div>
 
             <button
@@ -119,9 +110,12 @@ export default function SearchPage() {
               }}
               onClick={(e) => {
                 e.stopPropagation(); // para não abrir o modal ao salvar
-                saveRecipe(
-                  `# ${item.title}\n\n**Fonte:** ${item.font}\n**Link:** [${item.link}](${item.link})\n\n${item.description}`
-                );
+                saveRecipe({
+                  title: item.title,
+                  content: item.content,
+                  font: item.font,
+                  link: item.link,
+                });
               }}
             >
               Salvar
@@ -214,8 +208,15 @@ export default function SearchPage() {
           showSaveButton={true}
           visible={!!selectedRecipe}
           onClose={() => setSelectedRecipe(null)}
-          data={selectedRecipe}
-          handleSave={saveRecipe}
+          data={selectedRecipe?.content || ""}
+          handleSave={() =>
+            saveRecipe({
+              title: selectedRecipe.title,
+              content: selectedRecipe.content,
+              font: selectedRecipe.font,
+              link: selectedRecipe.link,
+            })
+          }
         />
       )}
     </div>

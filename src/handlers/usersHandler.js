@@ -8,15 +8,23 @@ export const usersHandler = (user, setUser) => {
       password: password,
     };
     try {
-      const response = await api.post(
-        "cook_ai/cookai/users/register",
-        userData
-      );
-      const data = response.data; // Corrigido: axios já retorna o JSON parseado
-      console.log(data);
-      localStorage.setItem("@CookAI:user", JSON.stringify(data));
-      setUser(data);
-      return data;
+      // 1. Cria o usuário
+      await api.post("/cookai/users/register", userData);
+
+      // 2. Faz login para obter o token JWT
+      const loginResponse = await api.post("/cookai/users/login", {
+        email,
+        password,
+      });
+      const { access_token } = loginResponse.data;
+      localStorage.setItem("@CookAI:token", access_token);
+
+      // 3. Busca o perfil completo do usuário
+      const profileResponse = await api.get("/cookai/users/me");
+      const profile = profileResponse.data;
+      localStorage.setItem("@CookAI:user", JSON.stringify(profile));
+      setUser(profile);
+      return profile;
     } catch (error) {
       throw new Error("Erro ao fazer registro: " + error.message);
     }
@@ -28,12 +36,17 @@ export const usersHandler = (user, setUser) => {
       password: password,
     };
     try {
-      const response = await api.post("cook_ai/cookai/users/login", userData);
-      const data = response.data; // Corrigido: axios já retorna o JSON parseado
+      // 1. Faz login e obtém o token JWT
+      const response = await api.post("/cookai/users/login", userData);
+      const { access_token } = response.data;
+      localStorage.setItem("@CookAI:token", access_token);
 
-      localStorage.setItem("@CookAI:user", JSON.stringify(data));
-      setUser(data);
-      return data;
+      // 2. Busca o perfil completo do usuário
+      const profileResponse = await api.get("/cookai/users/me");
+      const profile = profileResponse.data;
+      localStorage.setItem("@CookAI:user", JSON.stringify(profile));
+      setUser(profile);
+      return profile;
     } catch (error) {
       throw new Error("Erro ao fazer login: " + error.message);
     }
@@ -42,7 +55,27 @@ export const usersHandler = (user, setUser) => {
   const signOut = () => {
     console.log("saindo..");
     localStorage.removeItem("@CookAI:user");
+    localStorage.removeItem("@CookAI:token");
     setUser(null);
+  };
+
+  /**
+   * Completa login usando um token já obtido (ex: Google OAuth).
+   * Armazena o token e busca o perfil do usuário.
+   */
+  const loginWithToken = async (accessToken) => {
+    try {
+      localStorage.setItem("@CookAI:token", accessToken);
+
+      const profileResponse = await api.get("/cookai/users/me");
+      const profile = profileResponse.data;
+      localStorage.setItem("@CookAI:user", JSON.stringify(profile));
+      setUser(profile);
+      return profile;
+    } catch (error) {
+      localStorage.removeItem("@CookAI:token");
+      throw new Error("Erro ao completar login: " + error.message);
+    }
   };
 
   const getUserData = async () => {
@@ -58,5 +91,5 @@ export const usersHandler = (user, setUser) => {
     }
   };
 
-  return { registerIn, login, getUserData, signOut };
+  return { registerIn, login, loginWithToken, getUserData, signOut };
 };

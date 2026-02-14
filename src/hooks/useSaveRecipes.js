@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/auth/useAuth";
 import { apiHandler } from "../handlers/apiHandler";
-import { usersHandler } from "../handlers/usersHandler";
 import { setItem, removeItem } from "../handlers/localStorageHandler";
 import { useNavigate } from "react-router-dom";
 
@@ -9,22 +8,20 @@ export function useSaveRecipe() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { user } = useAuth();
   const useApiHandler = apiHandler();
-  const useUsersHandler = usersHandler();
   const navigate = useNavigate();
 
-  const saveRecipe = async (data, onSuccess) => {
+  /**
+   * Salva uma receita. Espera receber um objeto com {title, content, font, link}
+   * compatível com o RecipeRegister do backend.
+   */
+  const saveRecipe = async (recipeData, onSuccess) => {
     if (!user) {
-      setItem("TempRecipe", JSON.stringify(data));
+      setItem("TempRecipe", recipeData);
       setShowLoginModal(true);
       return;
     }
     try {
-      const userData = await useUsersHandler.getUserData();
-      const cookaiUserId = userData.cookai_user_id;
-      if (!cookaiUserId) {
-        throw new Error("CookAI user ID not found");
-      }
-      await useApiHandler.saveRecipe(cookaiUserId, { content: data });
+      await useApiHandler.saveRecipe(recipeData);
       removeItem("TempRecipe");
       if (onSuccess) onSuccess();
     } catch (e) {

@@ -7,7 +7,10 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const { registerIn, login, signOut } = usersHandler(user, setUser);
+  const { registerIn, login, loginWithToken, signOut } = usersHandler(
+    user,
+    setUser,
+  );
 
   useEffect(() => {
     const storedUser = localStorage.getItem("@CookAI:user");
@@ -16,7 +19,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, registerIn, login, signOut, loading }}>
+    <AuthContext.Provider
+      value={{ user, registerIn, login, loginWithToken, signOut, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

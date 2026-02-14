@@ -47,7 +47,7 @@ export default function ScrapResults({ data }) {
     } catch {}
   };
 
-  if (!resultContent) {
+  if (!resultContent || !resultContent.content) {
     return (
       <div style={styles.empty}>
         <span style={markdownStyles.body}>Nenhuma receita encontrada.</span>
@@ -76,7 +76,10 @@ export default function ScrapResults({ data }) {
           </span>
           <span style={styles.actionText}>Expandir</span>
         </button>
-        <button style={styles.actionBtn} onClick={() => saveRecipe(data)}>
+        <button
+          style={styles.actionBtn}
+          onClick={() => saveRecipe(resultContent)}
+        >
           <span
             role="img"
             aria-label="salvar"
@@ -89,13 +92,13 @@ export default function ScrapResults({ data }) {
       </div>
       <div style={styles.card}>
         <ReactMarkdown components={markdownComponents}>
-          {resultContent}
+          {resultContent?.content || ""}
         </ReactMarkdown>
       </div>
       <Recipe
         visible={expanded}
         onClose={handleCloseRecipe}
-        data={resultContent}
+        data={resultContent?.content || ""}
       />
       {/* Modal de Login */}
       {showLoginModal && (

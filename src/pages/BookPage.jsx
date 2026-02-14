@@ -4,7 +4,6 @@ import { apiHandler } from "../handlers/apiHandler";
 import { useAuth } from "../contexts/auth/useAuth";
 import ModalLogin from "../components/ModalLogin";
 import { useNavigate } from "react-router-dom";
-import { usersHandler } from "../handlers/usersHandler";
 import { Book, FilePdf } from "react-bootstrap-icons";
 import SearchBar from "../components/Searchbar";
 import { exportRecipesToPDF } from "../handlers/pdfHandler";
@@ -14,7 +13,6 @@ import Recipe from "../components/Recipe";
 
 export default function BookPage() {
   const useApiHandler = apiHandler();
-  const useUsersHandler = usersHandler();
   const { user } = useAuth();
   const [recipes, setRecipes] = useState([]);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -35,12 +33,7 @@ export default function BookPage() {
     }
     if (navigator.onLine) {
       try {
-        const userData = await useUsersHandler.getUserData();
-        const cookaiUserId = userData.cookai_user_id;
-        if (!cookaiUserId) {
-          throw new Error("CookAI user ID not found");
-        }
-        const response = await useApiHandler.getSavedRecipes(cookaiUserId);
+        const response = await useApiHandler.getSavedRecipes();
         setRecipes(response || []);
         setFilteredRecipes(response || []);
         // Salva todas as receitas no IndexedDB para uso offline
@@ -121,11 +114,8 @@ export default function BookPage() {
     }
 
     try {
-      const userData = await useUsersHandler.getUserData();
-      const cookaiUserId = userData.cookai_user_id;
-
       if (navigator.onLine) {
-        await useApiHandler.deleteRecipe(cookaiUserId, selectedRecipe.id);
+        await useApiHandler.deleteRecipe(selectedRecipe.id);
       }
 
       // Remove do IndexedDB
@@ -143,9 +133,6 @@ export default function BookPage() {
 
   const handleSaveEdit = async (updatedData) => {
     try {
-      const userData = await useUsersHandler.getUserData();
-      const cookaiUserId = userData.cookai_user_id;
-
       const updatedRecipe = {
         ...editingRecipe,
         title: updatedData.title,
@@ -153,7 +140,7 @@ export default function BookPage() {
       };
 
       if (navigator.onLine) {
-        await useApiHandler.updateRecipe(cookaiUserId, editingRecipe.id, {
+        await useApiHandler.updateRecipe(editingRecipe.id, {
           title: updatedData.title,
           content: updatedData.content,
         });
@@ -164,7 +151,7 @@ export default function BookPage() {
 
       // Atualiza a lista local
       const updatedRecipes = recipes.map((r) =>
-        r.id === editingRecipe.id ? updatedRecipe : r
+        r.id === editingRecipe.id ? updatedRecipe : r,
       );
       setRecipes(updatedRecipes);
       setFilteredRecipes(updatedRecipes);
@@ -237,7 +224,7 @@ export default function BookPage() {
                     progress.total
                       ? Math.min(
                           100,
-                          Math.round((progress.current / progress.total) * 100)
+                          Math.round((progress.current / progress.total) * 100),
                         )
                       : 10
                   }%`,

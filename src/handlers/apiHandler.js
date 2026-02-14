@@ -2,11 +2,9 @@ import { toast } from "react-toastify";
 import { api } from "../constants/constants";
 
 export function apiHandler() {
-  const getSavedRecipes = async (cookaiUserId) => {
+  const getSavedRecipes = async () => {
     try {
-      const response = await api.get(
-        `/cook_ai/recipes/cookai_user/${cookaiUserId}`
-      );
+      const response = await api.get(`/cookai/users/my_recipes`);
       if (!response) toast.promise("Carregando...");
       return response.data;
     } catch (error) {
@@ -15,12 +13,9 @@ export function apiHandler() {
     }
   };
 
-  const saveRecipe = async (cookaiUserId, dados) => {
+  const saveRecipe = async (dados) => {
     try {
-      const response = await api.post(
-        `/cook_ai/recipes/cookai_user/${cookaiUserId}/save`,
-        dados
-      );
+      const response = await api.post(`/cookai/users/save_recipe`, dados);
       toast.success("Receita salva com sucesso!");
       return response.data;
     } catch (error) {
@@ -30,16 +25,15 @@ export function apiHandler() {
   };
 
   const scrapRecipe = async (url) => {
-    console.log(url);
     try {
       const response = await api.post(
-        `cook_ai/recipes/scrap?url=${encodeURIComponent(url)}`
+        `/cookai/recipes/scrap?url=${encodeURIComponent(url)}`,
       );
       toast.success("Receita extraída com sucesso!");
       return response.data;
     } catch (error) {
       toast.error(
-        "Erro ao extrair receita. Verifique a URL e tente novamente."
+        "Erro ao extrair receita. Verifique a URL e tente novamente.",
       );
       throw error;
     }
@@ -47,7 +41,9 @@ export function apiHandler() {
 
   const searchRecipes = async (query) => {
     try {
-      const response = await api.post("cook_ai/recipes/search", { query });
+      const response = await api.post(
+        `/cookai/recipes/search_web?query=${encodeURIComponent(query)}`,
+      );
       return response.data;
     } catch (error) {
       toast.error("Erro ao buscar receitas. Tente novamente mais tarde.");
@@ -55,11 +51,11 @@ export function apiHandler() {
     }
   };
 
-  const updateRecipe = async (cookaiUserId, recipeId, dados) => {
+  const updateRecipe = async (recipeId, dados) => {
     try {
       const response = await api.put(
-        `/cook_ai/recipes/cookai_user/${cookaiUserId}/${recipeId}`,
-        dados
+        `/cookai/users/update_recipe/${recipeId}`,
+        dados,
       );
       toast.success("Receita atualizada com sucesso!");
       return response.data;
@@ -69,10 +65,10 @@ export function apiHandler() {
     }
   };
 
-  const deleteRecipe = async (cookaiUserId, recipeId) => {
+  const deleteRecipe = async (recipeId) => {
     try {
       const response = await api.delete(
-        `/cook_ai/recipes/cookai_user/${cookaiUserId}/${recipeId}`
+        `/cookai/users/delete_recipe/${recipeId}`,
       );
       toast.success("Receita excluída com sucesso!");
       return response.data;
