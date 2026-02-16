@@ -21,6 +21,7 @@ export default function GoogleCallbackPage() {
       }
 
       const accessToken = searchParams.get("access_token");
+      const refreshToken = searchParams.get("refresh_token");
       if (!accessToken) {
         setError("Token não encontrado na URL.");
         toast.error("Falha na autenticação com Google.");
@@ -29,7 +30,7 @@ export default function GoogleCallbackPage() {
       }
 
       try {
-        await loginWithToken(accessToken);
+        await loginWithToken(accessToken, refreshToken);
         toast.success("Login com Google realizado com sucesso!");
         navigate("/book", { replace: true });
       } catch (err) {

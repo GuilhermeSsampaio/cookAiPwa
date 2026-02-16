@@ -11,13 +11,14 @@ export const usersHandler = (user, setUser) => {
       // 1. Cria o usuário
       await api.post("/cookai/users/register", userData);
 
-      // 2. Faz login para obter o token JWT
+      // 2. Faz login para obter os tokens JWT
       const loginResponse = await api.post("/cookai/users/login", {
         email,
         password,
       });
-      const { access_token } = loginResponse.data;
+      const { access_token, refresh_token } = loginResponse.data;
       localStorage.setItem("@CookAI:token", access_token);
+      localStorage.setItem("@CookAI:refresh_token", refresh_token);
 
       // 3. Busca o perfil completo do usuário
       const profileResponse = await api.get("/cookai/users/me");
@@ -36,10 +37,11 @@ export const usersHandler = (user, setUser) => {
       password: password,
     };
     try {
-      // 1. Faz login e obtém o token JWT
+      // 1. Faz login e obtém os tokens JWT
       const response = await api.post("/cookai/users/login", userData);
-      const { access_token } = response.data;
+      const { access_token, refresh_token } = response.data;
       localStorage.setItem("@CookAI:token", access_token);
+      localStorage.setItem("@CookAI:refresh_token", refresh_token);
 
       // 2. Busca o perfil completo do usuário
       const profileResponse = await api.get("/cookai/users/me");
@@ -56,16 +58,20 @@ export const usersHandler = (user, setUser) => {
     console.log("saindo..");
     localStorage.removeItem("@CookAI:user");
     localStorage.removeItem("@CookAI:token");
+    localStorage.removeItem("@CookAI:refresh_token");
     setUser(null);
   };
 
   /**
-   * Completa login usando um token já obtido (ex: Google OAuth).
-   * Armazena o token e busca o perfil do usuário.
+   * Completa login usando tokens já obtidos (ex: Google OAuth).
+   * Armazena os tokens e busca o perfil do usuário.
    */
-  const loginWithToken = async (accessToken) => {
+  const loginWithToken = async (accessToken, refreshToken) => {
     try {
       localStorage.setItem("@CookAI:token", accessToken);
+      if (refreshToken) {
+        localStorage.setItem("@CookAI:refresh_token", refreshToken);
+      }
 
       const profileResponse = await api.get("/cookai/users/me");
       const profile = profileResponse.data;
@@ -74,6 +80,7 @@ export const usersHandler = (user, setUser) => {
       return profile;
     } catch (error) {
       localStorage.removeItem("@CookAI:token");
+      localStorage.removeItem("@CookAI:refresh_token");
       throw new Error("Erro ao completar login: " + error.message);
     }
   };
