@@ -1,67 +1,85 @@
 import React, { useState } from "react";
+import { Lightbulb } from "react-bootstrap-icons";
 import { useAuth } from "../contexts/auth/useAuth";
 import { apiHandler } from "../handlers/apiHandler";
 import ScrapBar from "../components/ScrapBar";
 import ScrapResults from "../components/ScrapResults";
 import Spinner from "../components/Spinner";
+import SuggestionModal from "../components/SuggestionModal";
+import { getGreeting, getRandomRecipe } from "./recipeUtils";
+import styles from "./HomePage.module.css";
 
 export default function Home() {
   const { user } = useAuth();
   const [results, setResults] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentRecipe, setCurrentRecipe] = useState(null);
   const useApiHandler = apiHandler();
 
   const handleScrap = async (link) => {
-    console.log(link);
     setLoading(true);
     setError(null);
     try {
       const response = await useApiHandler.scrapRecipe(link);
-      if (response) {
-        setResults(response);
-      } else {
-        setResults("Nenhum resultado encontrado.");
-      }
+      setResults(response || "Nenhum resultado encontrado.");
     } catch (error) {
       setError("Erro: " + error);
       setResults("");
-
-      throw new Error("Ocorreu um erro ao tentar extrair a receita");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+
+  const handleOpenSuggestion = () => {
+    setCurrentRecipe(getRandomRecipe());
+    setModalVisible(true);
+  };
+
+  const handleNextRecipe = () => {
+    setCurrentRecipe(getRandomRecipe());
+  };
+
+  const handleSaveRecipe = () => {
+    console.log("Receita salva:", currentRecipe);
+    setModalVisible(false);
+  };
+
   return (
-    <div className="container">
-      <div style={styles.title} className="m-4">
-        Bem-vindo{user ? `, ${user.username}` : ""}!
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.greeting}>
+          {getGreeting()}
+          {user && <span className={styles.username}>, {user.username}</span>}!
+        </h1>
       </div>
 
-      <ScrapBar onScrap={handleScrap} />
-      {loading ? (
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ minHeight: "200px" }}
-        >
-          <Spinner />
-        </div>
-      ) : error ? (
-        <div className="alert alert-danger text-center mt-4" role="alert">
-          {error}
-        </div>
-      ) : (
-        <ScrapResults data={results || ""} />
-      )}
-      {/* <button onClick={signOut}>Sair</button> */}
+      <button className={styles.suggestionBtn} onClick={handleOpenSuggestion}>
+        <Lightbulb size={16} />
+        Quer uma sugestão?
+      </button>
+
+      <SuggestionModal
+        visible={modalVisible}
+        recipe={currentRecipe}
+        onClose={() => setModalVisible(false)}
+        onNext={handleNextRecipe}
+        onSave={handleSaveRecipe}
+      />
+
+      <div className={styles.content}>
+        <ScrapBar onScrap={handleScrap} />
+        {loading ? (
+          <div className={styles.loadingContainer}>
+            <Spinner />
+          </div>
+        ) : error ? (
+          <div className={styles.errorAlert}>{error}</div>
+        ) : (
+          <ScrapResults data={results || ""} />
+        )}
+      </div>
     </div>
   );
 }
-const styles = {
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#ed4f27ff",
-    marginBottom: 16,
-    textAlign: "left",
-  },
-};
