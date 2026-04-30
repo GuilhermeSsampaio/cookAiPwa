@@ -1,24 +1,7 @@
 import axios from "axios";
 
-export const BASE_URL = (() => {
-  const rawBaseUrl = import.meta.env.VITE_API_URL ?? "";
-  const resolvedBaseUrl = rawBaseUrl.trim() || "http://localhost:8000";
-
-  // Avoid mixed-content errors when the app is served over HTTPS.
-  if (
-    typeof window !== "undefined" &&
-    window.location.protocol === "https:" &&
-    resolvedBaseUrl.startsWith("http://")
-  ) {
-    return resolvedBaseUrl.replace(/^http:/, "https:");
-  }
-
-  return resolvedBaseUrl;
-})();
-
-if (import.meta.env.PROD) {
-  console.info("[CookAI] BASE_URL:", BASE_URL);
-}
+export const BASE_URL =
+  import.meta.env.VITE_API_URL?.trim() || "http://localhost:8000";
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -42,14 +25,6 @@ const processQueue = (error, token = null) => {
 
 // Interceptor para anexar o token JWT em todas as requisições
 api.interceptors.request.use((config) => {
-  if (import.meta.env.PROD) {
-    console.info("[CookAI] Request:", {
-      baseURL: config.baseURL,
-      url: config.url,
-      method: config.method,
-    });
-  }
-
   const token = localStorage.getItem("@CookAI:token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
