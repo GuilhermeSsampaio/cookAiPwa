@@ -42,6 +42,14 @@ const processQueue = (error, token = null) => {
 
 // Interceptor para anexar o token JWT em todas as requisições
 api.interceptors.request.use((config) => {
+  if (import.meta.env.PROD) {
+    console.info("[CookAI] Request:", {
+      baseURL: config.baseURL,
+      url: config.url,
+      method: config.method,
+    });
+  }
+
   const token = localStorage.getItem("@CookAI:token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
