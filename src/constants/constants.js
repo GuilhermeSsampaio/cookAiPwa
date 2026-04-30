@@ -1,21 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = (() => {
-  const rawBaseUrl = import.meta.env.VITE_API_URL ?? "";
-  const resolvedBaseUrl = rawBaseUrl.trim() || "http://localhost:8000";
-
-  // Avoid mixed-content errors when the app is served over HTTPS.
-  if (
-    typeof window !== "undefined" &&
-    window.location.protocol === "https:" &&
-    resolvedBaseUrl.startsWith("http://")
-  ) {
-    return resolvedBaseUrl.replace(/^http:/, "https:");
-  }
-
-  return resolvedBaseUrl;
-})();
-
+export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 export const api = axios.create({
   baseURL: BASE_URL,
   timeout: 40000,
