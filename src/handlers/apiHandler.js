@@ -4,7 +4,7 @@ import { api } from "../constants/constants";
 export function apiHandler() {
   const getSavedRecipes = async () => {
     try {
-      const response = await api.get(`/recipes`);
+      const response = await api.get(`/recipes/`);
       if (!response) toast.promise("Carregando...");
       return response.data;
     } catch (error) {
@@ -15,7 +15,7 @@ export function apiHandler() {
 
   const saveRecipe = async (dados) => {
     try {
-      const response = await api.post(`/recipes`, dados);
+      const response = await api.post(`/recipes/`, dados);
       toast.success("Receita salva com sucesso!");
       return response.data;
     } catch (error) {
