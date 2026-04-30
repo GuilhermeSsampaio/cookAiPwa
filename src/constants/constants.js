@@ -16,6 +16,10 @@ export const BASE_URL = (() => {
   return resolvedBaseUrl;
 })();
 
+if (import.meta.env.PROD) {
+  console.info("[CookAI] BASE_URL:", BASE_URL);
+}
+
 export const api = axios.create({
   baseURL: BASE_URL,
   timeout: 40000,
