@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
         // Valida o token em background — se expirado, o interceptor
         // faz refresh automaticamente usando o refresh_token
         try {
-          const profileResponse = await api.get("/cookai/users/me");
+          const profileResponse = await api.get("/users/me");
           const profile = profileResponse.data;
           localStorage.setItem("@CookAI:user", JSON.stringify(profile));
           setUser(profile);

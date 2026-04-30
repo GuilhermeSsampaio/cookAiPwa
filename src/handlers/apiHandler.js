@@ -4,7 +4,7 @@ import { api } from "../constants/constants";
 export function apiHandler() {
   const getSavedRecipes = async () => {
     try {
-      const response = await api.get(`/cookai/users/my_recipes`);
+      const response = await api.get(`/recipes`);
       if (!response) toast.promise("Carregando...");
       return response.data;
     } catch (error) {
@@ -15,7 +15,7 @@ export function apiHandler() {
 
   const saveRecipe = async (dados) => {
     try {
-      const response = await api.post(`/cookai/users/save_recipe`, dados);
+      const response = await api.post(`/recipes`, dados);
       toast.success("Receita salva com sucesso!");
       return response.data;
     } catch (error) {
@@ -26,10 +26,8 @@ export function apiHandler() {
 
   const scrapRecipe = async (url) => {
     try {
-      const response = await api.post(
-        `/cookai/recipes/scrap?url=${encodeURIComponent(url)}`,
-      );
-      toast.success("Receita extraída com sucesso!");
+      const response = await api.post(`/ai/scrap`, { url });
+      toast.success("Receita extraida com sucesso!");
       return response.data;
     } catch (error) {
       toast.error(
@@ -41,9 +39,7 @@ export function apiHandler() {
 
   const searchRecipes = async (query) => {
     try {
-      const response = await api.post(
-        `/cookai/recipes/search_web?query=${encodeURIComponent(query)}`,
-      );
+      const response = await api.post(`/ai/search`, { query });
       return response.data;
     } catch (error) {
       toast.error("Erro ao buscar receitas. Tente novamente mais tarde.");
@@ -53,10 +49,7 @@ export function apiHandler() {
 
   const updateRecipe = async (recipeId, dados) => {
     try {
-      const response = await api.put(
-        `/cookai/users/update_recipe/${recipeId}`,
-        dados,
-      );
+      const response = await api.put(`/recipes/${recipeId}`, dados);
       toast.success("Receita atualizada com sucesso!");
       return response.data;
     } catch (error) {
@@ -67,10 +60,8 @@ export function apiHandler() {
 
   const deleteRecipe = async (recipeId) => {
     try {
-      const response = await api.delete(
-        `/cookai/users/delete_recipe/${recipeId}`,
-      );
-      toast.success("Receita excluída com sucesso!");
+      const response = await api.delete(`/recipes/${recipeId}`);
+      toast.success("Receita excluida com sucesso!");
       return response.data;
     } catch (error) {
       toast.error("Erro ao excluir receita. Tente novamente mais tarde.");

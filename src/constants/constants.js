@@ -45,8 +45,6 @@ api.interceptors.response.use(
     const authPaths = [
       "/auth/login",
       "/auth/refresh",
-      "/cookai/users/login",
-      "/cookai/users/register",
       "/auth/register",
     ];
     if (authPaths.some((path) => originalRequest.url?.includes(path))) {
